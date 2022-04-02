@@ -13,11 +13,10 @@ namespace Snake.Behaviours;
 
 public sealed class SnakeBehaviour : Plugin
 {
-    public SnakeBehaviour(IActivationFunction activationFunction, NeuralNetwork network, Scene scene) :
+    public SnakeBehaviour(Scene scene) :
         base(scene)
     {
-        _activationFunction = activationFunction;
-        _neuralNetwork = network;
+
     }
 
     public bool EnableTimer { get; set; } = true;
@@ -42,11 +41,7 @@ public sealed class SnakeBehaviour : Plugin
         LifeLeft--;
         Moves++;
 
-        var vision = GetVision();
-        var output = _neuralNetwork.FeedForward(_activationFunction, vision);
-
-        var newDirection = GetNewDirection(output);
-        MoveSnake(newDirection);
+        MoveSnake();
 
         if (SnakeHead.CollidesWith(SnakeFood))
         {
@@ -56,13 +51,6 @@ public sealed class SnakeBehaviour : Plugin
         return true;
     }
 
-    #region Dependencies
-
-    private readonly IActivationFunction _activationFunction;
-
-    private readonly NeuralNetwork _neuralNetwork;
-
-    #endregion
 
     #region Constants
 
@@ -103,121 +91,12 @@ public sealed class SnakeBehaviour : Plugin
 
     #endregion
 
-    #region Vision
-
-    private bool BodyCollide(Vector2 v)
-    {
-        return SnakeBody.Any(b => b.CollidesWith(v));
-    }
-
-    private bool WallCollide(Vector2 v)
-    {
-        return v.X - SnakeGameConfig.CellSize.X / 2.0f <= 0 ||
-               v.Y - SnakeGameConfig.CellSize.Y / 2.0f <= 0 ||
-               v.X + SnakeGameConfig.CellSize.X / 2.0f >= SnakeGameConfig.BoardSize.X ||
-               v.Y + SnakeGameConfig.CellSize.Y / 2.0f >= SnakeGameConfig.BoardSize.Y;
-    }
-
-    private bool FoodCollide(Vector2 v)
-    {
-        return SnakeFood.CollidesWith(v);
-    }
-
-    private float[] Look(Vector2 direction)
-    {
-        var look = new float[3];
-        var pos = SnakeHead.Primitive.BoundingRectangle.Center;
-        var distance = 0.0f;
-        var foodFound = false;
-        var bodyFound = false;
-        pos += direction;
-        distance += 1;
-        while (!WallCollide(pos))
-        {
-            if (!foodFound && FoodCollide(pos))
-            {
-                foodFound = true;
-                look[0] = 1;
-            }
-
-            if (!bodyFound && BodyCollide(pos))
-            {
-                bodyFound = true;
-                look[1] = 1;
-            }
-
-            pos += direction;
-            distance += 1;
-        }
-
-        look[2] = 1 / distance;
-        return look;
-    }
-
-    private float[] GetVision()
-    {
-        var vision = new float[24];
-        var temp = Look(new Vector2(-SnakeGameConfig.CellSize.X, 0));
-        vision[0] = temp[0];
-        vision[1] = temp[1];
-        vision[2] = temp[2];
-        temp = Look(new Vector2(-SnakeGameConfig.CellSize.X, -SnakeGameConfig.CellSize.Y));
-        vision[3] = temp[0];
-        vision[4] = temp[1];
-        vision[5] = temp[2];
-        temp = Look(new Vector2(0, -SnakeGameConfig.CellSize.Y));
-        vision[6] = temp[0];
-        vision[7] = temp[1];
-        vision[8] = temp[2];
-        temp = Look(new Vector2(SnakeGameConfig.CellSize.X, -SnakeGameConfig.CellSize.Y));
-        vision[9] = temp[0];
-        vision[10] = temp[1];
-        vision[11] = temp[2];
-        temp = Look(new Vector2(SnakeGameConfig.CellSize.X, 0));
-        vision[12] = temp[0];
-        vision[13] = temp[1];
-        vision[14] = temp[2];
-        temp = Look(new Vector2(SnakeGameConfig.CellSize.X, SnakeGameConfig.CellSize.Y));
-        vision[15] = temp[0];
-        vision[16] = temp[1];
-        vision[17] = temp[2];
-        temp = Look(new Vector2(0, SnakeGameConfig.CellSize.Y));
-        vision[18] = temp[0];
-        vision[19] = temp[1];
-        vision[20] = temp[2];
-        temp = Look(new Vector2(-SnakeGameConfig.CellSize.X, SnakeGameConfig.CellSize.Y));
-        vision[21] = temp[0];
-        vision[22] = temp[1];
-        vision[23] = temp[2];
-        return vision;
-    }
-
-    #endregion
-
     #region Movement
 
-    private Direction GetNewDirection(float[] output)
+    private void MoveSnake()
     {
-        var maxOutput = 0.0f;
-        var direction = SnakeHead.Direction;
-        for (var i = 0; i < output.Length; i++)
-        {
-            var outputValue = output[i];
-            if (outputValue > maxOutput)
-            {
-                maxOutput = outputValue;
-                direction = (Direction)i;
-            }
-        }
-
-        return direction;
-    }
-
-    private void MoveSnake(Direction direction)
-    {
-        SnakeHead.Direction = direction;
-        SnakeHead.Translate(SnakeGameConfig.GetMovement(direction));
-        var lastDirection = direction;
+        SnakeHead.Translate(SnakeGameConfig.GetMovement(SnakeHead.Direction));
+        var lastDirection = SnakeHead.Direction;
         for (var i = 0; i < SnakeBody.Count; i++)
         {
             var bodyComponent = SnakeBody[i];

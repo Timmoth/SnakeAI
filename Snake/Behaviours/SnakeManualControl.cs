@@ -5,16 +5,21 @@ using Snake.States;
 
 namespace Snake.Behaviours;
 
-public class SnakeControlBehaviour : Plugin
+public class SnakeManualControl : Plugin
 {
     public static string BehaviourName = "SnakeControl";
 
-    public SnakeControlBehaviour(Scene scene) : base(scene)
+    public SnakeManualControl(Scene scene) : base(scene)
     {
     }
 
     public override bool Handle(UiEvent uiEvent)
     {
+        if (!Enabled)
+        {
+            return false;
+        }
+
         if (uiEvent is not KeyDownEvent keyEvent)
         {
             return false;

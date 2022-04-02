@@ -27,6 +27,19 @@ public class SnakeBase : ComponentBase
 
     public Scene Scene { get; set; }
     public SnakeBehaviour SnakeGame { get; set; }
+    private bool _isAiEnabled = false;
+
+    public bool IsAiEnabled
+    {
+        get => _isAiEnabled;
+        set
+        {
+            _isAiEnabled = value;
+            Scene.Plugins[SnakeManualControl.BehaviourName].Enabled = !_isAiEnabled;
+            Scene.Plugins[SnakeAIControl.BehaviourName].Enabled = _isAiEnabled;
+        }
+    }
+
 
     public void CreateGame(NeuralNetwork network)
     {
@@ -46,10 +59,11 @@ public class SnakeBase : ComponentBase
         snakeFood.BorderColor = Color.DarkSlateGray;
         Scene.Add(snakeFood);
 
-        var snakeDirection = new SnakeControlBehaviour(Scene);
-        Scene.Plugins.Add(snakeDirection);
+        Scene.Plugins.Add(new SnakeManualControl(Scene));
 
-        SnakeGame = new SnakeBehaviour(ActivationFunction, network, Scene)
+        Scene.Plugins.Add(new SnakeAIControl(Scene, ActivationFunction, network));
+
+        SnakeGame = new SnakeBehaviour(Scene)
         {
             SnakeHead = snakeHead,
             SnakeFood = snakeFood
