@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Demo;
+namespace Trainer;
 
 public static class Helpers
 {

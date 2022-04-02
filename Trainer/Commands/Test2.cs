@@ -5,7 +5,7 @@ using NeuralSharp.Activation;
 using NeuralSharp.Generators;
 using Spectre.Console.Cli;
 
-namespace Demo.Commands;
+namespace Trainer.Commands;
 
 internal sealed class
     Test2Command : Command<Test2Command.Settings> //Got rid of the code in this because it's no longer correct with how the products are structured, need to rewrite this at some point.

@@ -20,6 +20,7 @@ namespace Demo.Pages;
 
 public class SnakeBase : ComponentBase
 {
+    private bool _isAiEnabled;
     [Inject] public HttpClient Client { get; set; }
     [Inject] public IActivationFunction ActivationFunction { get; set; }
     [Inject] public IBiasGenerator BiasGenerator { get; set; }
@@ -27,7 +28,6 @@ public class SnakeBase : ComponentBase
 
     public Scene Scene { get; set; }
     public SnakeBehaviour SnakeGame { get; set; }
-    private bool _isAiEnabled = false;
 
     public bool IsAiEnabled
     {
@@ -110,7 +110,7 @@ public class SnakeBase : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        Scene = new Scene()
+        Scene = new Scene
         {
             Size = SnakeGameConfig.BoardSize
         };

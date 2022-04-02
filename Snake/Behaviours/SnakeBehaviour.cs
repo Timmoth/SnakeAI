@@ -4,10 +4,7 @@ using Aptacode.AppFramework;
 using Aptacode.AppFramework.Components;
 using Aptacode.AppFramework.Plugins;
 using Aptacode.Geometry.Primitives;
-using NeuralSharp;
-using NeuralSharp.Activation;
 using Snake.Components;
-using Snake.States;
 
 namespace Snake.Behaviours;
 
@@ -16,7 +13,6 @@ public sealed class SnakeBehaviour : Plugin
     public SnakeBehaviour(Scene scene) :
         base(scene)
     {
-
     }
 
     public bool EnableTimer { get; set; } = true;
@@ -50,6 +46,23 @@ public sealed class SnakeBehaviour : Plugin
 
         return true;
     }
+
+    #region Movement
+
+    private void MoveSnake()
+    {
+        SnakeHead.Translate(SnakeGameConfig.GetMovement(SnakeHead.Direction));
+        var lastDirection = SnakeHead.Direction;
+        for (var i = 0; i < SnakeBody.Count; i++)
+        {
+            var bodyComponent = SnakeBody[i];
+            bodyComponent.Translate(SnakeGameConfig.GetMovement(bodyComponent.Direction));
+
+            (lastDirection, bodyComponent.Direction) = (bodyComponent.Direction, lastDirection);
+        }
+    }
+
+    #endregion
 
 
     #region Constants
@@ -88,23 +101,6 @@ public sealed class SnakeBehaviour : Plugin
 
     public EventHandler<SnakeGameResult> GameOver { get; set; }
     public EventHandler<int> ScoreChanged { get; set; }
-
-    #endregion
-
-    #region Movement
-
-    private void MoveSnake()
-    {
-        SnakeHead.Translate(SnakeGameConfig.GetMovement(SnakeHead.Direction));
-        var lastDirection = SnakeHead.Direction;
-        for (var i = 0; i < SnakeBody.Count; i++)
-        {
-            var bodyComponent = SnakeBody[i];
-            bodyComponent.Translate(SnakeGameConfig.GetMovement(bodyComponent.Direction));
-
-            (lastDirection, bodyComponent.Direction) = (bodyComponent.Direction, lastDirection);
-        }
-    }
 
     #endregion
 

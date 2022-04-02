@@ -1,6 +1,6 @@
 ﻿using Spectre.Console.Cli;
 
-namespace Demo.Infrastructure;
+namespace Trainer.Infrastructure;
 
 public sealed class TypeResolver : ITypeResolver, IDisposable
 {

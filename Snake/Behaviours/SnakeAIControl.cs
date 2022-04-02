@@ -11,27 +11,22 @@ public class SnakeAIControl : Plugin
 {
     public static string BehaviourName = "SnakeAIControl";
 
-    public SnakeAIControl(Scene scene, IActivationFunction activationFunction, NeuralNetwork neuralNetwork) : base(scene)
+    private SnakeBehaviour _snakeBehaviour;
+
+    public SnakeAIControl(Scene scene, IActivationFunction activationFunction, NeuralNetwork neuralNetwork) :
+        base(scene)
     {
         _activationFunction = activationFunction;
         _neuralNetwork = neuralNetwork;
     }
 
-    #region Dependencies
-
-    private readonly IActivationFunction _activationFunction;
-
-    private readonly NeuralNetwork _neuralNetwork;
-
-    #endregion
-
-    private SnakeBehaviour _snakeBehaviour;
     public override bool Handle(float deltaT)
     {
         if (!Enabled)
         {
             return false;
         }
+
         _snakeBehaviour ??= Scene.Plugins.Get<SnakeBehaviour>(SnakeBehaviour.BehaviourName);
 
         var vision = GetVision();
@@ -46,6 +41,14 @@ public class SnakeAIControl : Plugin
     {
         return BehaviourName;
     }
+
+    #region Dependencies
+
+    private readonly IActivationFunction _activationFunction;
+
+    private readonly NeuralNetwork _neuralNetwork;
+
+    #endregion
 
     #region Vision
 
