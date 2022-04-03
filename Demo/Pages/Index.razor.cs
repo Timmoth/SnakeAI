@@ -18,7 +18,7 @@ using Snake.States;
 
 namespace Demo.Pages;
 
-public class SnakeBase : ComponentBase
+public class IndexBase : ComponentBase
 {
     private bool _isAiEnabled;
     [Inject] public HttpClient Client { get; set; }
@@ -101,6 +101,7 @@ public class SnakeBase : ComponentBase
         SnakeGame.Walls.Add(left);
 
         SnakeGame.Reset();
+        IsAiEnabled = true;
     }
 
     private void GameOver(object? sender, SnakeGameResult e)

@@ -1,1 +1,6 @@
 ﻿@page "/"
+
+@inherits IndexBase
+<input @bind="@IsAiEnabled" type="checkbox"/> Use AI<br/>
+
+<SceneView Scene="Scene"/>
