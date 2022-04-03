@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NeuralSharp.Activation;
 using NeuralSharp.Generators;
 using NeuralSharp.Genetic;
@@ -19,7 +20,11 @@ services.AddTransient<INetworkMutator, NetworkMutator>();
 services.AddTransient<IFloatMutator, FloatMutator>();
 services.AddTransient<IMutationDecider>(_ => new MutationDecider(0.02f));
 services.AddTransient<Evolution>();
-services.AddLogging();
+
+services.AddLogging(b => b
+    .AddFilter("Microsoft", LogLevel.Warning)
+    .AddFilter("System", LogLevel.Warning)
+    .AddConsole());
 
 var registrar = new TypeRegistrar(services);
 
@@ -28,14 +33,8 @@ var registrar = new TypeRegistrar(services);
 var app = new CommandApp(registrar);
 app.Configure(config =>
 {
-    config.AddCommand<Test1Command>("test1")
-        .WithDescription("Run Test 1");
-
-    config.AddCommand<Test2Command>("test2")
-        .WithDescription("Run Test 2");
-
-    //config.AddCommand<Test3Command>("test3")
-    //    .WithDescription("Run Test 3");
+    config.AddCommand<Test3Command>("train")
+        .WithDescription("Train snake network");
 
 
 #if DEBUG
