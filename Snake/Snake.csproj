@@ -7,6 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Aptacode.AppFramework" Version="1.0.43" />
 		<PackageReference Include="NeuralSharp" Version="1.0.1" />
 	</ItemGroup>
